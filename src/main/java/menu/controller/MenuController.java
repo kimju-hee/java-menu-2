@@ -1,5 +1,6 @@
 package menu.controller;
 
+import camp.nextstep.edu.missionutils.Randoms;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -18,6 +19,8 @@ public class MenuController {
     private final InputHandler inputHandler;
 
     public LinkedHashMap<String, List<String>> coachInfo = new LinkedHashMap<>();
+    public List<String> categoryList = new ArrayList<>();
+    public LinkedHashMap<String, List<String>> coachResult = new LinkedHashMap<>();
 
     public MenuController(MenuBoard menuBoard, OutputView outputView, InputView inputView, InputHandler inputHandler) {
         this.menuBoard = menuBoard;
@@ -29,9 +32,21 @@ public class MenuController {
     public void start() {
         inputCoachInfo();
         List<String> coaches = getCoachName();
-        for (String c: coaches) {
-            getCantFoodByCoachName(c);
+        for (String co : coaches) {
+            setInitCoachResult(co);
         }
+
+        for (int i = 0; i < 5; i++) {
+            String category = chooseCategory();
+        }
+
+        outputView.printResultFirst(categoryList);
+        for (Map.Entry<String, List<String>> entry : coachResult.entrySet()) {
+            String coach = entry.getKey();
+            List<String> foods = entry.getValue();
+            outputView.printResult(coach, foods);
+        }
+        outputView.printResultFinal();
     }
 
     public void inputCoachInfo() {
@@ -56,10 +71,30 @@ public class MenuController {
         List<String> coaches = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : coachInfo.entrySet()) {
             String name = entry.getKey();
-            System.out.println(name);
             coaches.add(name);
         }
         return coaches;
+    }
+
+    public List<String> getCoachResultByCoachName(String coachName) {
+        List<String> coachFinalFood = coachResult.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getKey(), coachName))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(Collections.emptyList());
+        return coachFinalFood;
+    }
+
+    public void setInitCoachResult(String coachName) {
+        List<String> tempList = new ArrayList<>() {
+        };
+        for (Map.Entry<String, List<String>> entry : coachInfo.entrySet()) {
+            String coach = entry.getKey();
+            if (!coachResult.containsKey(coach)) {
+                coachResult.put(coach, tempList);
+            }
+        }
     }
 
     public List<String> getCantFoodByCoachName(String coachName) {
@@ -70,10 +105,70 @@ public class MenuController {
                 .findFirst()
                 .orElse(Collections.emptyList());
 
-        for (String f : foundValue) {
-            System.out.println(f);
-        }
-
         return foundValue;
     }
+
+    public void setCoachResult(String coachName, List<String> finalFood) {
+        coachResult.put(coachName, finalFood);
+    }
+
+    public String chooseCategory() {
+        boolean check = false;
+        String ca = "";
+        while (!check) {
+            int num = Randoms.pickNumberInRange(1, 5);
+            String category = categoryFormatter(num);
+            ca = category;
+            check = this.checkFrequency(category, check);
+            List<String> coaches = getCoachName();
+            for (String co: coaches) {
+                chooseFood(ca, co);
+            }
+        }
+        categoryList.add(ca);
+        return ca;
+    }
+
+    public boolean checkFrequency(String category, boolean check) {
+        int count = Collections.frequency(categoryList, category);
+        if (count < 2) {
+            check = true;
+        }
+        return check;
+    }
+
+    public String categoryFormatter(int category) {
+        String temp = "";
+        if (category == 1) {
+            temp = "일식";
+        }
+        if (category == 2) {
+            temp = "한식";
+        }
+        if (category == 3) {
+            temp = "중식";
+        }
+        if (category == 4) {
+            temp = "아시안";
+        }
+        if (category == 5) {
+            temp = "양식";
+        }
+        return temp;
+    }
+
+    public void chooseFood(String category, String coachName) {
+        boolean checkFood = false;
+        List<String> finalFood = new ArrayList<>(getCoachResultByCoachName(coachName)); // 기존 리스트 복사
+        while (!checkFood) {
+            List<String> foods = menuBoard.getMenuNamesByCategories(category);
+            String menu = Randoms.shuffle(foods).get(0);
+            if (!finalFood.contains(menu) && !getCantFoodByCoachName(coachName).contains(menu)) {
+                finalFood.add(menu);
+                checkFood = true;
+            }
+            setCoachResult(coachName, finalFood);
+        }
+    }
+
 }

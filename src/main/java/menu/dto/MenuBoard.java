@@ -1,13 +1,16 @@
 package menu.dto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class MenuBoard {
     public final LinkedHashMap<String, List<String>> menuBoard;
     public List<String> allFoodName = new ArrayList<>();
+    public List<String> categories = new ArrayList<>();
 
     public MenuBoard(LinkedHashMap<String, List<String>> menuBoard) {
         this.menuBoard = menuBoard;
@@ -18,7 +21,13 @@ public class MenuBoard {
     }
 
     public List<String> getMenuNamesByCategories(String category) {
-        return menuBoard.getOrDefault(category, List.of());
+        List<String> foundValue = menuBoard.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getKey(), category))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(Collections.emptyList());
+        return foundValue;
     }
 
     public List<String> getAllFoodName() {
@@ -29,5 +38,13 @@ public class MenuBoard {
             }
         }
         return allFoodName;
+    }
+
+    public List<String> getCategories() {
+        for (Map.Entry<String, List<String>> entry : menuBoard.entrySet()) {
+            String cateName = entry.getKey();
+            categories.add(cateName);
+        }
+        return categories;
     }
 }
