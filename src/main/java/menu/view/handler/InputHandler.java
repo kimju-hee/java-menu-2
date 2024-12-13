@@ -14,6 +14,10 @@ public class InputHandler {private final InputView inputView;
         return receiveValidatedInput(inputView::coachInput);
     }
 
+    public String receiveValidCoachFood() {
+        return receiveValidatedInput(inputView::coachCantEatInput);
+    }
+
     private <T> T receiveValidatedInput(Supplier<T> inputView) {
         while (true) {
             try {

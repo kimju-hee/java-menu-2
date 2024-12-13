@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MenuBoard {
-    private final LinkedHashMap<String, List<String>> menuBoard;
+    public final LinkedHashMap<String, List<String>> menuBoard;
+    public List<String> allFoodName = new ArrayList<>();
 
     public MenuBoard(LinkedHashMap<String, List<String>> menuBoard) {
         this.menuBoard = menuBoard;
@@ -18,5 +19,15 @@ public class MenuBoard {
 
     public List<String> getMenuNamesByCategories(String category) {
         return menuBoard.getOrDefault(category, List.of());
+    }
+
+    public List<String> getAllFoodName() {
+        for (Map.Entry<String, List<String>> entry : menuBoard.entrySet()) {
+            List<String> name = entry.getValue();
+            for (String n : name) {
+                allFoodName.add(n);
+            }
+        }
+        return allFoodName;
     }
 }

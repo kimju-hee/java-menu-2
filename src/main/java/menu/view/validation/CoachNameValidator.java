@@ -38,9 +38,11 @@ public class CoachNameValidator {
     private static void throwError() {
         throw new IllegalArgumentException(ErrorMessage.INVALID_COACH_NAME.getMessage());
     }
+
     private static void throwError2() {
         throw new IllegalArgumentException(ErrorMessage.INVALID_COACH_RANGE.getMessage());
     }
+
     private static void throwError3() {
         throw new IllegalArgumentException(ErrorMessage.INVALID_COACH.getMessage());
     }
