@@ -21,7 +21,7 @@ public class CoachFoodValidator {
 
     public void isValidName(String[] input) {
         for (String i : input) {
-            if (!i.isEmpty() && !i.matches("^[ㄱ-ㅎ가-힣]+$")) {
+            if (!i.trim().isEmpty() && !i.matches("^[ㄱ-ㅎ가-힣]+$")) {
                 throwError();
             }
         }
