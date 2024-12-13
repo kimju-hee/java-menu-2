@@ -3,24 +3,29 @@ package menu.controller;
 import java.util.List;
 import java.util.Map;
 import menu.dto.MenuBoard;
+import menu.view.InputView;
+import menu.view.OutputView;
+import menu.view.handler.InputHandler;
 
 public class MenuController {
     private final MenuBoard menuBoard;
+    private final OutputView outputView;
+    private final InputView inputView;
+    private final InputHandler inputHandler;
 
-    public MenuController(MenuBoard menuBoard) {
+    public MenuController(MenuBoard menuBoard, OutputView outputView, InputView inputView, InputHandler inputHandler) {
         this.menuBoard = menuBoard;
+        this.outputView = outputView;
+        this.inputView = inputView;
+        this.inputHandler = inputHandler;
     }
 
     public void start() {
-        disPlayAllMenu();
+        inputCoachNames();
     }
 
-    public void disPlayAllMenu() {
-        Map<String, List<String>> categories = menuBoard.getMenuBoard();
-        for (Map.Entry<String, List<String>> entry : categories.entrySet()) {
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
-        }
-
+    public void inputCoachNames() {
+        outputView.printCoachNameInputText();
+        inputHandler.receiveValidCoachNames();
     }
 }
